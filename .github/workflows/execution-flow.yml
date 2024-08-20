@@ -1,0 +1,95 @@
+name: Production build Deployment
+on:
+  push:
+    branches:
+      - main
+jobs:
+  lint:
+    # run the npm lint
+    runs-on: localLinux
+    steps:
+      # get the code
+      - name: Get code
+        uses: actions/checkout@v3
+      # install package dependancies
+      - name: Install dependencies
+        run: npm ci
+
+  test:
+    # run the npm test configured in the package.json file
+    runs-on: localLinux
+    steps:
+      # get the code
+      - name: Get code
+        uses: actions/checkout@v3
+      # install package dependancies
+      - name: Install dependencies
+        run: npm ci
+      # run the test command
+      - name: Test code
+        id: run-tests
+        run: npm run test
+      # only interested in test report if there are failures
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
+  SonarQube:
+    # scan the code
+    needs: test
+    runs-on: localLinux
+    steps:
+      # get the code
+      - name: Get code
+        uses: actions/checkout@v3
+      # scan the code and pass in the workflow run id so the webhook from sonarqube can pass it to Plutora
+      - name: Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.analysis.buildNumber=${{github.run_id}}
+  build:
+    needs: SonarQube
+    runs-on: localLinux
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Build website
+        id: build-website
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+  deploy:
+    needs: build
+    runs-on: localLinux
+    environment: System10_SIT
+    steps:
+      - name: Get build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+      - name: Output contents
+        run: ls
+      - name: Deploy
+        run: echo "Deploying..."
+  report:
+    needs: [lint, deploy]
+    if: failure()
+    runs-on: localLinux
+    steps:
+      - name: Output information
+        run: | 
+          echo "Something went wrong"
+          echo $JSON
+        env:
+          JSON: ${{ toJSON(github) }}

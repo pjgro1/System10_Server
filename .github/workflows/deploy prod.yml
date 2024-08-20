@@ -1,0 +1,10 @@
+name: Prod Deployment
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: localLinux
+    environment: System10_PROD
+    steps:
+      - name: Deploy
+        run: echo "Deploying..."
