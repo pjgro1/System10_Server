@@ -1,4 +1,4 @@
-name: Production build Deployment
+ho name: Production build Deployment
 on:
   push:
     branches:
@@ -56,6 +56,6 @@ jobs:
     environment: System10_SIT
     steps:
       - name: Get build artifacts
-        run: "Get artifacts"
+        run: echo "Get artifacts"
       - name: Deploy
         run: echo "Deploying..."
