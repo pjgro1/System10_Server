@@ -6,7 +6,7 @@ on:
 jobs:
   lint:
     # run the npm lint
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       # get the code
       - name: Get code
@@ -17,7 +17,7 @@ jobs:
 
   test:
     # run the npm test configured in the package.json file
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       # get the code
       - name: Get code
@@ -39,7 +39,7 @@ jobs:
   SonarQube:
     # scan the code
     needs: test
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       # get the code
       - name: Get code
@@ -55,7 +55,7 @@ jobs:
             -Dsonar.analysis.buildNumber=${{github.run_id}}
   build:
     needs: SonarQube
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -71,7 +71,7 @@ jobs:
           path: dist
   deploy:
     needs: build
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     environment: System10_SIT
     steps:
       - name: Get build artifacts
@@ -85,7 +85,7 @@ jobs:
   report:
     needs: [lint, deploy]
     if: failure()
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       - name: Output information
         run: | 
