@@ -39,7 +39,7 @@ jobs:
     steps:
       # get the code
       - name: Get code
-        run: "Scan"
+        run: echo "Scan"
   build:
     needs: SonarQube
     runs-on: [self-hosted, linux]
