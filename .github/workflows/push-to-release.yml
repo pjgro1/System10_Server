@@ -1,10 +1,11 @@
 name: Release Merge Deployment
 on:
-  push:
-    branches:
-      - 'release-**'
+  pull_request:
+    types:
+      - closed
 jobs:
   lint:
+    if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     # run the npm lint
     runs-on: [self-hosted, linux]
     steps:
