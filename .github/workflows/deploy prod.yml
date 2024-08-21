@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     environment: System10_PROD
     steps:
       - name: Deploy
