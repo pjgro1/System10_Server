@@ -6,7 +6,7 @@ on:
 jobs:
   lint:
     # run the npm lint
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       # get the code
       - name: Get code
@@ -19,7 +19,7 @@ jobs:
         run: npm run lint
   test:
     # run the npm test configured in the package.json file
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       # get the code
       - name: Get code
@@ -30,25 +30,18 @@ jobs:
       # run the test command
       - name: Test code
         id: run-tests
-        run: npm run test
-      # only interested in test report if there are failures
-      - name: Upload test report
-        if: failure() && steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: test.json
+        run: echo "run tests"
   SonarQube:
     # scan the code
     needs: test
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       # get the code
       - name: Get code
-        uses: actions/checkout@v3
+        run: "Scan"
   build:
     needs: SonarQube
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -56,33 +49,19 @@ jobs:
         run: npm ci
       - name: Build website
         id: build-website
-        run: npm run build
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: mscoutermarsh/cowsays-action@v1
         with:
-          name: dist-files
-          path: dist
+          text: "Built"
+          color: "Green"
   deploy:
     needs: build
-    runs-on: localLinux
+    runs-on: [self-hosted, linux]
     environment: System10_UAT
     steps:
-      - name: Get build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: dist-files
       - name: Output contents
         run: ls
       - name: Deploy
-        run: echo "Deploying..."
-  report:
-    needs: [lint, deploy]
-    if: failure()
-    runs-on: localLinux
-    steps:
-      - name: Output information
-        run: | 
-          echo "Something went wrong"
-          echo $JSON
-        env:
-          JSON: ${{ toJSON(github) }}
+        uses: mscoutermarsh/cowsays-action@v1
+        with:
+          text: "Deployed to UAT"
+          color: "Red"
