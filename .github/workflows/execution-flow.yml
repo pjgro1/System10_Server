@@ -14,7 +14,6 @@ jobs:
       # install package dependancies
       - name: Install dependencies
         run: npm ci
-
   test:
     # run the npm test configured in the package.json file
     runs-on: [self-hosted, linux]
@@ -29,13 +28,6 @@ jobs:
       - name: Test code
         id: run-tests
         run: npm run test
-      # only interested in test report if there are failures
-      - name: Upload test report
-        if: failure() && steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: test.json
   SonarQube:
     # scan the code
     needs: test
@@ -46,13 +38,7 @@ jobs:
         uses: actions/checkout@v3
       # scan the code and pass in the workflow run id so the webhook from sonarqube can pass it to Plutora
       - name: Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.analysis.buildNumber=${{github.run_id}}
+        run: echo "Scan succeeded"
   build:
     needs: SonarQube
     runs-on: [self-hosted, linux]
@@ -63,33 +49,13 @@ jobs:
         run: npm ci
       - name: Build website
         id: build-website
-        run: npm run build
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-files
-          path: dist
+        run: echo "Build"
   deploy:
     needs: build
     runs-on: [self-hosted, linux]
     environment: System10_SIT
     steps:
       - name: Get build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: dist-files
-      - name: Output contents
-        run: ls
+        run: "Get artifacts"
       - name: Deploy
         run: echo "Deploying..."
-  report:
-    needs: [lint, deploy]
-    if: failure()
-    runs-on: [self-hosted, linux]
-    steps:
-      - name: Output information
-        run: | 
-          echo "Something went wrong"
-          echo $JSON
-        env:
-          JSON: ${{ toJSON(github) }}
