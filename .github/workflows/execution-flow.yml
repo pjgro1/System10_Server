@@ -1,20 +1,11 @@
 name: Production build Deployment
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - closed
 jobs:
-  lint:
-    # run the npm lint
-    runs-on: [self-hosted, linux]
-    steps:
-      # get the code
-      - name: Get code
-        uses: actions/checkout@v3
-      # install package dependancies
-      - name: Install dependencies
-        run: npm ci
   test:
+    if: contains(github.head_ref, 'release_') && contains(github.base_ref, 'main') && github.event.action == 'closed' && github.event.pull_request.merged == true
     # run the npm test configured in the package.json file
     runs-on: [self-hosted, linux]
     steps:
@@ -28,6 +19,17 @@ jobs:
       - name: Test code
         id: run-tests
         run: npm run test
+  lint:
+    needs: test
+    # run the npm lint
+    runs-on: [self-hosted, linux]
+    steps:
+      # get the code
+      - name: Get code
+        uses: actions/checkout@v3
+      # install package dependancies
+      - name: Install dependencies
+        run: npm ci
   SonarQube:
     # scan the code
     needs: test
@@ -58,4 +60,4 @@ jobs:
       - name: Get build artifacts
         run: echo "Get artifacts"
       - name: Deploy
-        run: echo "Deploying..."
+        run: echo "Deploying to SIT"
