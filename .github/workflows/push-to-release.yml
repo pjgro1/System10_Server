@@ -5,7 +5,6 @@ on:
       - closed
 jobs:
   deploy:
-    needs: build
     runs-on: [self-hosted, linux]
     environment: System10_UAT
     steps:
@@ -17,6 +16,7 @@ jobs:
           text: "Deployed to UAT"
           color: "Red"
   lint:
+    needs: deploy
     if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     # run the npm lint
     runs-on: [self-hosted, linux]
