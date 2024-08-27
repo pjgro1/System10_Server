@@ -31,6 +31,7 @@ jobs:
       - name: Lint code
         run: npm run lint
   test:
+    needs: deploy
     # run the npm test configured in the package.json file
     runs-on: [self-hosted, linux]
     steps:
