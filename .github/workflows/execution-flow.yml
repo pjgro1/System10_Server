@@ -2,7 +2,7 @@ name: Production build Deployment
 on:
   pull_request:
     types:
-      - closed
+      - locked
 jobs:
   deploy:
     if: contains(github.head_ref, 'release_') && contains(github.base_ref, 'main') && github.event.action == 'closed' && github.event.pull_request.merged == true
