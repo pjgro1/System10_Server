@@ -1,0 +1,5 @@
+{
+  "Host": "Cluster1",
+  "NameSpace": "System 10",
+  "Replicas": 3
+}
