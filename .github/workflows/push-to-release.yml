@@ -4,19 +4,7 @@ on:
     types:
       - closed
 jobs:
-  deploy:
-    runs-on: [self-hosted, linux]
-    environment: System10_UAT
-    steps:
-      - name: Output contents
-        run: ls
-      - name: Deploy
-        uses: mscoutermarsh/cowsays-action@v1
-        with:
-          text: "Deployed to UAT"
-          color: "Red"
   lint:
-    needs: deploy
     if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     # run the npm lint
     runs-on: [self-hosted, linux]
@@ -31,7 +19,7 @@ jobs:
       - name: Lint code
         run: npm run lint
   test:
-    needs: deploy
+    needs: lint
     # run the npm test configured in the package.json file
     runs-on: [self-hosted, linux]
     steps:
@@ -67,3 +55,15 @@ jobs:
         with:
           text: "Built"
           color: "Green"
+  deploy:
+    needs: build
+    runs-on: [self-hosted, linux]
+    environment: System10_UAT
+    steps:
+      - name: Output contents
+        run: ls
+      - name: Deploy
+        uses: mscoutermarsh/cowsays-action@v1
+        with:
+          text: "Deployed to UAT"
+          color: "Red"
