@@ -1,5 +1,6 @@
 {
   "System": "System10_Server",
+  "Parent": "System10",
   "Portfolio": "Sales",
   "AnsibleFile": "main.yaml"
 }
