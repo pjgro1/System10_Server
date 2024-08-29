@@ -2,10 +2,19 @@ name: Production build Deployment
 on:
   pull_request:
     types:
-      - closed
+      - locked
 jobs:
-  test:
+  deploy:
     if: contains(github.head_ref, 'release_') && contains(github.base_ref, 'main') && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: [self-hosted, linux]
+    environment: System10_SIT
+    steps:
+      - name: Get build artifacts
+        run: echo "Get artifacts"
+      - name: Deploy
+        run: echo "Deploying to SIT"
+  test:
+    needs: deploy
     # run the npm test configured in the package.json file
     runs-on: [self-hosted, linux]
     steps:
@@ -52,12 +61,3 @@ jobs:
       - name: Build website
         id: build-website
         run: echo "Build"
-  deploy:
-    needs: build
-    runs-on: [self-hosted, linux]
-    environment: System10_SIT
-    steps:
-      - name: Get build artifacts
-        run: echo "Get artifacts"
-      - name: Deploy
-        run: echo "Deploying..."

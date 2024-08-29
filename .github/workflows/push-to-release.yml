@@ -1,10 +1,11 @@
 name: Release Merge Deployment
 on:
-  push:
-    branches:
-      - 'release-**'
+  pull_request:
+    types:
+      - closed
 jobs:
   lint:
+    if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     # run the npm lint
     runs-on: [self-hosted, linux]
     steps:
@@ -18,6 +19,7 @@ jobs:
       - name: Lint code
         run: npm run lint
   test:
+    needs: lint
     # run the npm test configured in the package.json file
     runs-on: [self-hosted, linux]
     steps:
@@ -38,7 +40,7 @@ jobs:
     steps:
       # get the code
       - name: Get code
-        run: "Scan"
+        run: echo "Scan"
   build:
     needs: SonarQube
     runs-on: [self-hosted, linux]
