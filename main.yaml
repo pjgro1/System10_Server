@@ -4,7 +4,7 @@
 
   vars:
     key_name: my_aws             # Key used for SSH
-    region: ap-southeast-2       # Region may affect response and pricing
+    region: ap-southeast-1       # Region may affect response and pricing
     image: ami-06cd706b6bacee637 # look in ec2 > ami (filter owner alias: amazon) or amis of manually launched instances
     id: "example testing"
     instance_type: t2.nano       # Choose instance type, check AWS for pricing
