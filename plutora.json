@@ -1,5 +1,5 @@
 {
-  "Host": "Cluster1",
-  "NameSpace": "System 10",
-  "Replicas": 3
+  "System": "System10_Server",
+  "Portfolio": "Sales",
+  "AnsibleFile": "main.yaml"
 }
