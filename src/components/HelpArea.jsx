@@ -9,8 +9,8 @@ const HELP_ITEMS = [
   },
   {
     id: 'h2',
-    title: 'What is Plutora?',
-    text: 'Plutora is a SaaS product for release and environment management',
+    title: 'What is Plutora Release Management?',
+    text: 'Plutora Release Management Provides a release governance framework',
   },
   {
     id: 'h3',
