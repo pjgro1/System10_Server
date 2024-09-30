@@ -9,7 +9,7 @@ const HELP_ITEMS = [
   },
   {
     id: 'h2',
-    title: 'What is Plutora Release Management?',
+    title: 'What is Plutora Release Management? ',
     text: 'Plutora Release Management Provides a release governance framework',
   },
   {
