@@ -5,7 +5,6 @@ on:
       - closed
 jobs:
   lint:
-    if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     # run the npm lint
     runs-on: [self-hosted, linux]
     steps:
@@ -56,14 +55,15 @@ jobs:
           text: "Built"
           color: "Green"
   deploy:
+    if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     needs: build
     runs-on: [self-hosted, linux]
-    environment: System10_UAT
+    environment: System10_SIT
     steps:
       - name: Output contents
         run: ls
       - name: Deploy
         uses: mscoutermarsh/cowsays-action@v1
         with:
-          text: "Deployed to UAT"
+          text: "Deployed to SIT"
           color: "Red"
