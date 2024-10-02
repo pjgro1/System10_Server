@@ -58,12 +58,12 @@ jobs:
     if: contains(github.base_ref, 'release_') && github.event.action == 'closed' && github.event.pull_request.merged == true
     needs: build
     runs-on: [self-hosted, linux]
-    environment: System10_UAT
+    environment: System10_SIT
     steps:
       - name: Output contents
         run: ls
       - name: Deploy
         uses: mscoutermarsh/cowsays-action@v1
         with:
-          text: "Deployed to UAT"
+          text: "Deployed to SIT"
           color: "Red"
